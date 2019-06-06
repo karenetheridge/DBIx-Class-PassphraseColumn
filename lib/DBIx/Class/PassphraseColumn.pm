@@ -108,8 +108,8 @@ This module provides the following options for C<add_column>:
 
 = C<< passphrase => $encoding >>
 
-This specifies the encoding passphrases will be stored in. Possible values are
-C<rfc2307> and C<crypt>. The value of C<$encoding> is pass on unmodified to the
+This specifies the encoding that passphrases will be stored in. Possible values are
+C<rfc2307> and C<crypt>. The value of C<$encoding> is passed on unmodified to the
 C<inflate_passphrase> option provided by
 L<DBIx::Class::InflateColumn::Authen::Passphrase>. Please refer to its
 documentation for details.
