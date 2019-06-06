@@ -6,7 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 
 use TestSchema;
-use SQL::Translator;
 use Authen::Passphrase::RejectAll;
 
 my $schema = TestSchema->connect('dbi:SQLite:dbname=:memory:');
