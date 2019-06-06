@@ -4,6 +4,8 @@ use warnings;
 package DBIx::Class::PassphraseColumn;
 # ABSTRACT: Automatically hash password/passphrase columns
 
+our $VERSION = '0.03';
+
 use Class::Load 'load_class';
 use Sub::Name 'subname';
 use namespace::clean;
