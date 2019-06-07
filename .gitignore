@@ -1,4 +1,6 @@
-.*
-!.gitignore
-DBIx-Class-PassphraseColumn-*
-Debian_CPANTS.txt
+/.ackrc
+/.build/
+!/.gitignore
+/.latest
+/DBIx-Class-PassphraseColumn-*/
+/DBIx-Class-PassphraseColumn-*.tar.gz
