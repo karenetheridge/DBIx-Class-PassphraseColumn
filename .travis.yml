@@ -18,7 +18,10 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
-  - "5.8"
+matrix:
+  include:
+    - perl: "5.8"
+      env: AUTHOR_TESTING=0 # xt/author/clean-namespaces.t fails on 5.8
 env:
   global:
     - AUTHOR_TESTING=1
