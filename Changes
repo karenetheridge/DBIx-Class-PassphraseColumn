@@ -1,6 +1,6 @@
 Revision history for DBIx-Class-PassphraseColumn
 
-{{$NEXT}}
+0.03      2019-06-07 01:04:05Z
   * add DBD::SQLite to test requirements (RT#79809)
   * remove unused SQL::Translator from test requirements.
 
