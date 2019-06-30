@@ -8,7 +8,9 @@ use TestSchema;
 use Authen::Passphrase::RejectAll;
 
 my $schema = TestSchema->connect('dbi:SQLite:dbname=:memory:');
-$schema->deploy;
+
+my $sql = do { open my $fh, '<:raw', 't/lib/TestSchema.sql' or die $!; local $/; <$fh> };
+$schema->storage->dbh->do($sql);
 
 my $rs = $schema->resultset('Foo');
 
