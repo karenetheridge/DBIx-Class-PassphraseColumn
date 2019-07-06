@@ -8,6 +8,7 @@ our $VERSION = '0.04';
 
 use Class::Load 'load_class';
 use Sub::Name 'subname';
+use Encode ();
 use namespace::clean;
 
 use parent 'DBIx::Class';
@@ -169,7 +170,7 @@ sub register_column {
 
         my $encoder = sub {
             my ($val) = @_;
-            $class->new(%{ $args }, passphrase => $val)->${\"as_${encoding}"};
+            $class->new(%{ $args }, passphrase => Encode::encode('UTF-8', $val))->${\"as_${encoding}"};
         };
 
         $self->_passphrase_columns({
@@ -180,7 +181,7 @@ sub register_column {
         if (defined(my $meth = $info->{passphrase_check_method})) {
             my $checker = sub {
                 my ($row, $val) = @_;
-                return $row->get_inflated_column($column)->match($val);
+                return $row->get_inflated_column($column)->match(Encode::encode('UTF-8', $val));
             };
 
             my $name = join q[::] => $self->result_class, $meth;
