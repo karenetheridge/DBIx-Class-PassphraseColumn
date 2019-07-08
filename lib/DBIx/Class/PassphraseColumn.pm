@@ -6,7 +6,7 @@ package DBIx::Class::PassphraseColumn;
 
 our $VERSION = '0.04';
 
-use Class::Load 'load_class';
+use Module::Runtime 'require_module';
 use Sub::Name 'subname';
 use Encode ();
 use namespace::clean;
@@ -162,7 +162,7 @@ sub register_column {
                 && defined $info->{passphrase_class};
 
         my $class = 'Authen::Passphrase::' . $info->{passphrase_class};
-        load_class $class;
+        require_module($class);
 
         my $args = $info->{passphrase_args} || {};
         $self->throw_exception(q['passphrase_args' must be a hash reference])
