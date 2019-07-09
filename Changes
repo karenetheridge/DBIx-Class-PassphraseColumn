@@ -1,5 +1,7 @@
 Revision history for DBIx-Class-PassphraseColumn
 
+{{$NEXT}}
+
 0.04      2019-07-09 17:13:34Z (TRIAL RELEASE)
   * remove the implicit need for SQL::Translator in tests
   * support non-ascii passphrases by utf8-encoding the passphrase before

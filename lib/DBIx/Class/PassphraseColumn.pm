@@ -4,7 +4,7 @@ use warnings;
 package DBIx::Class::PassphraseColumn;
 # ABSTRACT: Automatically hash password/passphrase columns
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Module::Runtime 'require_module';
 use Sub::Name 'subname';
