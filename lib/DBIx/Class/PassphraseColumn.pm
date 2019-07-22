@@ -9,6 +9,7 @@ our $VERSION = '0.06';
 use Module::Runtime 'require_module';
 use Sub::Name 'subname';
 use Encode ();
+use SQL::Abstract 'is_literal_value';
 use namespace::clean;
 
 use parent 'DBIx::Class';
@@ -197,6 +198,50 @@ sub register_column {
     $self->next::method($column, $info, @rest);
 }
 
+=method set_inflated_columns
+
+Wrapper around L<DBIx::Class::Row/set_inflated_columns> to clear out old-and-outdated inflated
+object caches (see https://rt.cpan.org/Ticket/Display.html?id=130144).
+
+=cut
+
+sub set_inflated_columns {
+    my ($self, $upd) = @_;
+    foreach my $key (keys %$upd) {
+        # FIXME! this should be done in DBIx::Class::Row itself.
+        delete $self->{_inflated_column}{$key};
+    }
+    $self->next::method($upd);
+}
+
+=method set_inflated_column
+
+=for stopwords deflator
+
+Sets a column value from an inflated value.
+Identical to DBIx::Class::InflateColumn except C<< $self->{_inflated_column}{$col} >> is
+set/cleared first, before calling C<set_column>, instead of after, so we can use this
+information to tell if the string value needs to be encoded or if it has already been done (by
+the deflator sub).
+
+=cut
+
+sub set_inflated_column {
+    my ($self, $col, $value) = @_;
+
+    # pass through deflated stuff
+    if (! length ref $value or is_literal_value($value)) {
+        delete $self->{_inflated_column}{$col};
+        $self->set_column($col, $value);
+    }
+    else {
+        $self->{_inflated_column}{$col} = $value;
+        $self->set_column($col, $self->_deflated_column($col, $value));
+    }
+
+    return $value;
+}
+
 =method set_column
 
 Hash a passphrase column whenever it is set.
@@ -205,6 +250,11 @@ Hash a passphrase column whenever it is set.
 
 sub set_column {
     my ($self, $col, $val, @rest) = @_;
+
+    # skip calling the encoder if the original value was already inflated (therefore the string
+    # value we have is already the final copy to be stored)
+    return $self->next::method($col, $val, @rest)
+        if $self->{_inflated_column}{$col};
 
     my $ppr_cols = $self->_passphrase_columns;
     return $self->next::method($col, $ppr_cols->{$col}->($val), @rest)
