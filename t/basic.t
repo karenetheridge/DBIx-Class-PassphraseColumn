@@ -77,6 +77,22 @@ my $rs = $schema->resultset('Foo');
     }
 
     $row->update({
+        passphrase_rfc2307 => 'moo',
+        passphrase_crypt   => 'moo',
+    });
+
+    $row->discard_changes;
+    isa_ok $row->passphrase_rfc2307, 'Authen::Passphrase::SaltedDigest';
+    isa_ok $row->passphrase_crypt, 'Authen::Passphrase::BlowfishCrypt';
+
+    for my $t (qw(rfc2307 crypt)) {
+        ok !$row->${\"check_passphrase_${t}"}('mookooh'),
+            'rejects incorrect passphrase using check method';
+        ok $row->${\"check_passphrase_${t}"}('moo'),
+            'accepts correct passphrase using check method';
+    }
+
+    $row->update({
         passphrase_rfc2307 => Authen::Passphrase::AcceptAll->new,
         passphrase_crypt   => Authen::Passphrase::AcceptAll->new,
     });
@@ -110,6 +126,22 @@ my $rs = $schema->resultset('Foo');
 
         ok $row->${\"check_passphrase_${t}"}('mookooh'),
             'accepts any passphrase using check method';
+    }
+
+    $row->update({
+        passphrase_rfc2307 => 'moo',
+        passphrase_crypt   => 'moo',
+    });
+
+    $row->discard_changes;
+    isa_ok $row->passphrase_rfc2307, 'Authen::Passphrase::SaltedDigest';
+    isa_ok $row->passphrase_crypt, 'Authen::Passphrase::BlowfishCrypt';
+
+    for my $t (qw(rfc2307 crypt)) {
+        ok !$row->${\"check_passphrase_${t}"}('mookooh'),
+            'rejects incorrect passphrase using check method';
+        ok $row->${\"check_passphrase_${t}"}('moo'),
+            'accepts correct passphrase using check method';
     }
 
     $row->update({
