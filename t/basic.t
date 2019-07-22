@@ -6,6 +6,7 @@ use lib 't/lib';
 
 use TestSchema;
 use Authen::Passphrase::RejectAll;
+use Authen::Passphrase::AcceptAll;
 
 my $schema = TestSchema->connect('dbi:SQLite:dbname=:memory:');
 
@@ -70,6 +71,32 @@ my $rs = $schema->resultset('Foo');
     for my $t (qw(rfc2307 crypt)) {
         my $ppr = $row->${\"passphrase_${t}"};
         isa_ok $ppr, 'Authen::Passphrase::RejectAll';
+
+        ok !$row->${\"check_passphrase_${t}"}('mookooh'),
+            'rejects any passphrase using check method';
+    }
+}
+
+{
+    my $id = $rs->create({
+        passphrase_rfc2307 => Authen::Passphrase::AcceptAll->new,
+        passphrase_crypt   => Authen::Passphrase::AcceptAll->new,
+    })->id;
+
+    my $row = $rs->find({ id => $id });
+
+    is $row->get_column('passphrase_rfc2307'), '{CRYPT}',
+        'column stored as rfc2307';
+
+    is $row->get_column('passphrase_crypt'), '',
+        'column stored as crypt';
+
+    for my $t (qw(rfc2307 crypt)) {
+        my $ppr = $row->${\"passphrase_${t}"};
+        isa_ok $ppr, 'Authen::Passphrase::AcceptAll';
+
+        ok $row->${\"check_passphrase_${t}"}('mookooh'),
+            'accepts any passphrase using check method';
     }
 }
 
