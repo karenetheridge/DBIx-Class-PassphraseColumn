@@ -75,6 +75,19 @@ my $rs = $schema->resultset('Foo');
         ok !$row->${\"check_passphrase_${t}"}('mookooh'),
             'rejects any passphrase using check method';
     }
+
+    $row->update({
+        passphrase_rfc2307 => Authen::Passphrase::AcceptAll->new,
+        passphrase_crypt   => Authen::Passphrase::AcceptAll->new,
+    });
+
+    for my $t (qw(rfc2307 crypt)) {
+        my $ppr = $row->${\"passphrase_${t}"};
+        isa_ok $ppr, 'Authen::Passphrase::AcceptAll';
+
+        ok $row->${\"check_passphrase_${t}"}('mookooh'),
+            'accepts any passphrase using check method';
+    }
 }
 
 {
@@ -97,6 +110,19 @@ my $rs = $schema->resultset('Foo');
 
         ok $row->${\"check_passphrase_${t}"}('mookooh'),
             'accepts any passphrase using check method';
+    }
+
+    $row->update({
+        passphrase_rfc2307 => Authen::Passphrase::RejectAll->new,
+        passphrase_crypt   => Authen::Passphrase::RejectAll->new,
+    });
+
+    for my $t (qw(rfc2307 crypt)) {
+        my $ppr = $row->${\"passphrase_${t}"};
+        isa_ok $ppr, 'Authen::Passphrase::RejectAll';
+
+        ok !$row->${\"check_passphrase_${t}"}('mookooh'),
+            'rejects any passphrase using check method';
     }
 }
 
