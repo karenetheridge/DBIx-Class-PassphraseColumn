@@ -51,6 +51,7 @@ In application code:
 
     $row->passphrase('new passphrase');
     $row->passphrase( Authen::Passphrase::RejectAll->new );
+    $row->update;
 
 =head1 DESCRIPTION
 

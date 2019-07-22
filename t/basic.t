@@ -104,6 +104,13 @@ my $rs = $schema->resultset('Foo');
         ok $row->${\"check_passphrase_${t}"}('mookooh'),
             'accepts any passphrase using check method';
     }
+
+    $row->discard_changes;
+
+    for my $t (qw(rfc2307 crypt)) {
+        ok $row->${\"check_passphrase_${t}"}('mookooh'),
+            'accepts any passphrase using check method';
+    }
 }
 
 {
@@ -154,6 +161,13 @@ my $rs = $schema->resultset('Foo');
         isa_ok $ppr, 'Authen::Passphrase::RejectAll';
 
         ok !$row->${\"check_passphrase_${t}"}('mookooh'),
+            'rejects any passphrase using check method';
+    }
+
+    $row->discard_changes;
+
+    for my $t (qw(rfc2307 crypt)) {
+        ok !$row->${\"check_passphrase_${t}"}('*'),
             'rejects any passphrase using check method';
     }
 }
