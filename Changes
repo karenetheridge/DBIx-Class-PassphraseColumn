@@ -1,5 +1,7 @@
 Revision history for DBIx-Class-PassphraseColumn
 
+{{$NEXT}}
+
 0.05      2019-10-26 20:32:32Z
   * added some more tests
 
